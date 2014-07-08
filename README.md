@@ -1,4 +1,5 @@
 Plot Liberator
+
 A GUI for extracting data from plot images
 
 This project is designed to be a free, open-source alternative to [DataThief](http://www.datathief.org/). It can be used to extract data from plot images.
