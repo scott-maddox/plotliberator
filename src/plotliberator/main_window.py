@@ -108,8 +108,7 @@ class MainWindow(QtGui.QMainWindow):
         self.statusBar()
 
         # Axis value line edits
-        self.x1LineEdit = QtGui.QLineEdit(
-                                        '%g' % self.plotScene._x1)
+        self.x1LineEdit = QtGui.QLineEdit('%g' % self.plotScene._x1)
         self.x2LineEdit = QtGui.QLineEdit('1.')
         self.y1LineEdit = QtGui.QLineEdit('0.')
         self.y2LineEdit = QtGui.QLineEdit('1.')
