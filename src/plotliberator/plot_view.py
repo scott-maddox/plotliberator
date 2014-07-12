@@ -66,18 +66,6 @@ class ZoomableGraphicsView(QtGui.QGraphicsView):
         # First, perform the zoom
         self.scale(factor, factor)
 
-        #TODO: get gentleZoom working properly (centered on a spot) even when
-        #      the scene doesn't fill the whole view
-
-        #TODO: Fix the view recentering/moving when the scene size changes
-        #      We still want to keep the user from scrolling away from the
-        #      scene, though. This will take some thought.
-        # I could just make the scene size ~2x larger than the
-        # image, but still have the image centered. The problem with this
-        # is it will allow scrolling outside of the image extents when zoomed
-        # in. I need a way to allow panning the zoomed out image around
-        # the view, without extending the scene.
-
         # Next, move the scene, so that the zoom is centered on the mouse
         self.centerOn(targetScenePos)
         deltaViewportPos = (targetViewportPos -

@@ -17,3 +17,6 @@
 #   along with Plot Liberator.  If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
+
+from . import version
+from .version import __version__

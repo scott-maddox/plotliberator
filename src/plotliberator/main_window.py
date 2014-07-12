@@ -90,10 +90,6 @@ class MainWindow(QtGui.QMainWindow):
         self.saveAction.setShortcut('Ctrl+S')
         self.saveAction.triggered.connect(self.save)
 
-        #TODO: add a clear data action, menu item and button
-        #TODO: add a reset axes action, menu item and button
-        #TODO: when saving, first check that the axis values are valid
-
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(self.openAction)

@@ -44,8 +44,6 @@ class PlotScene(QtGui.QGraphicsScene):
     def __init__(self, parent=None):
         super(PlotScene, self).__init__(parent)
 
-        #TODO: restrict movement of the points to maintain a convex polygon
-
         # Initialize axis corners:
         # c1  c2
         #
@@ -188,8 +186,6 @@ class PlotScene(QtGui.QGraphicsScene):
             dataPointItem = MovableCursorItem(event.scenePos(),
                                               style='CircleCross',
                                               scene=self)
-            #TODO: change the dataPointItem pen/overlay style to always
-            # contrast against the background (difference? multiply?)
             dataPointItem.setPen(QtGui.QPen(Qt.darkGreen, 1., Qt.SolidLine))
             dataPointItem.setZValue(2.)
             self.dataPointItems.append(dataPointItem)
