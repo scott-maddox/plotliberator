@@ -140,19 +140,26 @@ class MainWindow(QtGui.QMainWindow):
         widget = QtGui.QWidget()
         grid = QtGui.QGridLayout()
 
-        # Row
-        #      0         1        2        3        4       5      Col
-        #                --
-        #  1  log       |  |
-        #              -----
-        #  2   y2     |     |
-        #              -----
-        #  3   y1     |     |
-        #              -----
-        #                      -----    -----      --
-        #  4                  |     |  |     |    |  |
-        #                      -----    -----      --
-        #  5                    x1       x2       log
+        # GridLayout:
+        #      0      1          2         3      4      5
+        #                    |-------------------------------|
+        #  0                 |                               |
+        #                    |                               |
+        #          |---|     |                               |
+        #  1  log  |   |     |                               |
+        #          |---|     |            PlotView           |
+        #          |------|  |                               |
+        #  2   y2  |      |  |                               |
+        #          |------|  |                               |
+        #          |------|  |                               |
+        #  3   y1  |      |  |                               |
+        #          |------|  |-------------------------------|
+        #                    |------|  |------|  |---|
+        #  4                 |      |  |      |  |   |
+        #                    |------|  |------|  |---|
+        #
+        #  5                    x1        x2      log
+
         grid.addWidget(self.yLogLabel, 1, 0)
         grid.addWidget(self.y2Label, 2, 0)
         grid.addWidget(self.y1Label, 3, 0)
@@ -170,11 +177,7 @@ class MainWindow(QtGui.QMainWindow):
         grid.addWidget(self.view, 0, 2, 4, 4)
         grid.setRowStretch(0, 1)
         grid.setColumnStretch(5, 1)
-        #vbox = QtGui.QVBoxLayout()
-        #vbox.addLayout(grid)
-        #vbox.addWidget(self.view)
 
-        #widget.setLayout(vbox)
         widget.setLayout(grid)
         self.setCentralWidget(widget)
 
