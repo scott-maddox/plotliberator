@@ -26,6 +26,7 @@ from PySide import QtGui
 from PySide.QtCore import Qt
 
 # local imports
+from version import __version__
 from plot_scene import PlotScene
 from plot_view import PlotView
 
@@ -283,25 +284,27 @@ class MainWindow(QtGui.QMainWindow):
 
     def about(self):
         title = 'About Plot Liberator'
-        text = """
-   Copyright (c) 2014, Scott J Maddox
-
-   This file is part of Plot Liberator.
-
-   Plot Liberator is free software: you can redistribute it and/or modify
-   it under the terms of the GNU Affero General Public License as
-   published by the Free Software Foundation, either version 3 of the
-   License, or (at your option) any later version.
-
-   Plot Liberator is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU Affero General Public License for more details.
-
-   You should have received a copy of the GNU Affero General Public
-   License along with Plot Liberator.  If not, see
-   <http://www.gnu.org/licenses/>.
-        """
+        text = ('Plot Liberator\n'
+                'Version {}\n'
+                '\n'
+                'Copyright (c) 2014, Scott J Maddox\n'
+                '\n'
+                'Plot Liberator is free software: you can redistribute it'
+                ' and/or modify it under the terms of the GNU Affero General'
+                ' Public License as published by the Free Software Foundation,'
+                ' either version 3 of the License, or (at your option) any'
+                ' later version.\n'
+                '\n'
+                'Plot Liberator is distributed in the hope that it will be'
+                ' useful, but WITHOUT ANY WARRANTY; without even the implied'
+                ' warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR'
+                ' PURPOSE.  See the GNU Affero General Public License for'
+                ' more details.\n'
+                '\n'
+                'You should have received a copy of the GNU Affero General'
+                ' Public License along with Plot Liberator.  If not, see'
+                ' <http://www.gnu.org/licenses/>.'
+                ''.format(__version__))
         QtGui.QMessageBox.about(self, title, text)
 
     def moveCenter(self):
