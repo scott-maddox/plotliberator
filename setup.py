@@ -32,35 +32,37 @@ exec(open('src/plotliberator/version.py').read())
 # If on Mac OS X, build an app bundle using py2app
 if sys.platform == 'darwin':
     # extra arguments for mac py2app to associate files
-    plist = {
-        'CFBundleName': 'Plot Liberator',
-        'CFBundleShortVersionString': __version__,
-        'CFBundleIdentifier': 'org.python.plotliberator',
-        }
-    
-    py2app_opts = {
-                   'argv_emulation': False,
-                   'includes' : ['PySide.QtCore', 'PySide.QtGui', 'numpy',
+    plist = dict(
+                 CFBundleName='Plot Liberator',
+                 CFBundleShortVersionString=__version__,
+                 CFBundleIdentifier='org.python.plotliberator',
+                 )
+    py2app_opts = dict(
+                       argv_emulation=False,
+                       includes=['PySide.QtCore', 'PySide.QtGui', 'numpy',
                                  'math'],
-#                    'excludes' : [],
-                   'plist': plist,
-                   #'iconfile': 'icons/plotliberator.icns',
-                   }
-    extra_options = {
-                    'setup_requires': ['py2app'],
-                    'app' : ['src/plotliberator/main.py'],
-                    'options': { 
-                                'py2app': py2app_opts
-                                }
-                    }
+                       #'excludes' : [],
+                       plist=plist,
+                       #'iconfile': 'icons/plotliberator.icns',
+                       )
+    extra_options = dict(
+                         setup_requires=['py2app'],
+                         app=['src/plotliberator/main.py'],
+                         options=dict(
+                                      py2app=py2app_opts
+                                      )
+                         )
 elif sys.platform == 'win32':
-    
-    extra_options = {
-                    'setup_requires': ['py2exe'],
-                    'app' : ['src/plotliberator/main.py'],
-                    }
+    extra_options = dict(
+                         setup_requires=['py2exe'],
+                         app=['src/plotliberator/main.py'],
+                         )
 else:
-    extra_options = {}
+    extra_options = dict(
+         # Normally unix-like platforms will use "setup.py install"
+         # and install the main script as such
+         scripts=['scripts/PlotLiberator.py'],
+     )
 
 setup(name='plotliberator',
       version=__version__,  # read from version.py

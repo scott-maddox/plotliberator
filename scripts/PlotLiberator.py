@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #   Copyright (c) 2014, Scott J Maddox
 #
@@ -18,31 +20,7 @@
 #
 #############################################################################
 
-# third party imports
-from PySide import QtGui, QtCore
-
 # local imports
-from main_window import MainWindow
+from plotliberator.main import run
 
-app = QtGui.QApplication([])
-
-# Set up QSettings
-app.setOrganizationName("Scott J Maddox")
-app.setApplicationName("Plot Liberator")
-settings = QtCore.QSettings()
-
-# Create main window
-w = MainWindow()
-w.show()
-w.activateWindow()
-w.raise_()
-
-
-def run():
-    import sys
-    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        QtGui.QApplication.instance().exec_()
-
-## Start Qt event loop unless running in interactive mode or using pyside.
-if __name__ == '__main__':
-    run()
+run()
