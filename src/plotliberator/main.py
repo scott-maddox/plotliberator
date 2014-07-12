@@ -18,9 +18,6 @@
 #
 #############################################################################
 
-# std lib imports
-import logging
-
 # third party imports
 from PySide import QtGui, QtCore
 
@@ -33,10 +30,6 @@ app = QtGui.QApplication([])
 app.setOrganizationName("Scott J Maddox")
 app.setApplicationName("Plot Liberator")
 settings = QtCore.QSettings()
-
-# Set up logging
-logging_level = settings.value("logging/level", logging.DEBUG)
-logging.basicConfig(level=logging_level)
 
 # Create main window
 w = MainWindow()
