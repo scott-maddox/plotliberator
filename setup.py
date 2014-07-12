@@ -39,11 +39,11 @@ if sys.platform == 'darwin':
                  )
     py2app_opts = dict(
                        argv_emulation=False,
-                       includes=['PySide.QtCore', 'PySide.QtGui', 'numpy',
+                       includes=['PySide', 'PySide.QtCore', 'PySide.QtGui',
                                  'math'],
-                       #'excludes' : [],
+                       excludes=['PySide.QtNetwork'],
                        plist=plist,
-                       #'iconfile': 'icons/plotliberator.icns',
+                       #iconfile=icons/plotliberator.icns',
                        )
     extra_options = dict(
                          setup_requires=['py2app'],

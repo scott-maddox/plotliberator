@@ -21,22 +21,30 @@
 # third party imports
 from PySide import QtGui, QtCore
 from PySide.QtCore import Qt
-import numpy
+
+
+def searchsorted(a, v):
+    for i, c in enumerate(a):
+        if v < c:
+            return i - 1
+    else:
+        return i
 
 
 class ZoomableGraphicsView(QtGui.QGraphicsView):
     '''
-    A subclas of QGraphicsView that supports:
+    A subclass of QGraphicsView that supports:
         Zooming
             zoomIn, ZoomOut, and actualSize slots
             Control + Mouse Wheel
             Pinch gesture
     '''
     plotItem = None
-    zoomLevels = numpy.array([0.1, 0.125, 0.15, 0.2, 0.25,
-                                0.3,   0.4,  0.5, 0.6,  0.8, 1.,
-                               1.25,   1.5,   2., 2.5,   3.,
-                                 4.,    5.,   6.,  7.,   9.])
+    zoomLevels = [0.1, 0.125, 0.15, 0.2, 0.25,
+                  0.3,   0.4,  0.5, 0.6,  0.8, 1.,
+                 1.25,   1.5,   2., 2.5,   3.,
+                   4.,    5.,   6.,  7.,   9.]
+    numZoomLevels = len(zoomLevels)
 
     def __init__(self, scene=None, parent=None):
         if scene is None:
@@ -108,13 +116,13 @@ class ZoomableGraphicsView(QtGui.QGraphicsView):
 
     @QtCore.Slot()
     def zoomIn(self):
-        i = numpy.searchsorted(self.zoomLevels, self.getZoom())
-        i = min(i + 1, self.zoomLevels.size - 1)
+        i = searchsorted(self.zoomLevels, self.getZoom())
+        i = min(i + 1, self.numZoomLevels - 1)
         self.setZoom(self.zoomLevels[i])
 
     @QtCore.Slot()
     def zoomOut(self):
-        i = numpy.searchsorted(self.zoomLevels, self.getZoom())
+        i = searchsorted(self.zoomLevels, self.getZoom())
         i = max(i - 1, 0)
         self.setZoom(self.zoomLevels[i])
 
