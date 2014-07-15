@@ -26,9 +26,9 @@ from PySide import QtGui
 from PySide.QtCore import Qt
 
 # local imports
-from version import __version__
-from plot_scene import PlotScene
-from plot_view import PlotView
+from .version import __version__
+from .plot_scene import PlotScene
+from .plot_view import PlotView
 
 IMAGE_FILTER = ('Image (*.bmp *.gif *.jpg *.jpeg *.png *.pbm '
                        '*.pgm *.ppm *.tiff *.xbm *.xpm)')
