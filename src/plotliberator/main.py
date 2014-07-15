@@ -24,9 +24,21 @@ import sys
 # third party imports
 from PySide import QtGui, QtCore
 
+
 # local imports
-from .main_window import MainWindow
-from .exception_handling import install_excepthook
+
+# If being run as a script, make sure the plotliberator package is
+# is on the path
+if __name__ == '__main__':
+    try:
+        import plotliberator
+    except ImportError:
+        import os
+        sys.path.append(
+            os.path.abspath(os.path.join(os.path.dirname(__file__), '..')) )
+        import plotliberator
+from plotliberator.main_window import MainWindow
+from plotliberator.exception_handling import install_excepthook
 
 
 def run():
@@ -54,3 +66,6 @@ def run():
 
     # Run the application
     app.exec_()
+
+if __name__ == '__main__':
+    run()

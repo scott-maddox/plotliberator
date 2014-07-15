@@ -26,7 +26,7 @@ from PySide import QtGui, QtCore
 from PySide.QtCore import Qt
 
 # local imports
-from .graphics_items import MovableCursorItem, GuideLineItem
+from plotliberator.graphics_items import MovableCursorItem, GuideLineItem
 
 
 class PlotScene(QtGui.QGraphicsScene):
