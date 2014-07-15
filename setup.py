@@ -47,7 +47,7 @@ if sys.platform == 'darwin':
                        )
     extra_options = dict(
                          setup_requires=['py2app'],
-                         app=['src/plotliberator/main.py'],
+                         app=['scripts/PlotLiberator.py'],
                          options=dict(
                                       py2app=py2app_opts
                                       )

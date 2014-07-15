@@ -54,6 +54,3 @@ def run():
 
     # Run the application
     app.exec_()
-
-if __name__ == '__main__':
-    run()
