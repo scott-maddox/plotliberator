@@ -23,23 +23,16 @@ from PySide import QtGui, QtCore
 from PySide.QtCore import Qt
 
 
-class MovableItemBase(QtGui.QGraphicsObject):
+class PenItemBase(QtGui.QGraphicsObject):
 
     _pen = Qt.NoPen
-    posChanged = QtCore.Signal(QtCore.QPointF)
 
     def __init__(self, parent=None, scene=None):
         if parent is not None and scene is not None:
             raise ValueError("Either parent or scene must be None")
-        super(MovableItemBase, self).__init__(parent)
+        super(PenItemBase, self).__init__(parent)
         if scene is not None:
             scene.addItem(self)
-
-        self.setAcceptHoverEvents(True)
-        self.setAcceptTouchEvents(True)
-        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
-        self.setFlag(QtGui.QGraphicsItem.ItemSendsScenePositionChanges)
-        self.setCursor(Qt.CrossCursor)
 
     def pen(self):
         return self._pen
@@ -47,6 +40,25 @@ class MovableItemBase(QtGui.QGraphicsObject):
     def setPen(self, pen):
         self.prepareGeometryChange()
         self._pen = pen
+
+    def penHalfWidth(self):
+        if self.pen() is not Qt.NoPen:
+            return max(self.pen().widthF() / 2., 1.)
+        else:
+            return 1.
+
+
+class MovableItemBase(PenItemBase):
+    posChanged = QtCore.Signal(QtCore.QPointF)
+
+    def __init__(self, parent=None, scene=None):
+        super(MovableItemBase, self).__init__(parent, scene)
+
+        self.setAcceptHoverEvents(True)
+        self.setAcceptTouchEvents(True)
+        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable)
+        self.setFlag(QtGui.QGraphicsItem.ItemSendsScenePositionChanges)
+        self.setCursor(Qt.CrossCursor)
 
     def itemChange(self, change, value):
         if change == QtGui.QGraphicsItem.ItemPositionHasChanged:
@@ -229,7 +241,134 @@ class MovableLineItem(MovableItemBase):
         return super(MovableLineItem, self).itemChange(change, value)
 
 
-if __name__ == '__main__':
+class GuideLineItem(PenItemBase):
+    '''
+    A guide line passing through the c1 and c2 MovableCursorItems,
+    and extending across the entire scene. When c1 and c2 are changed,
+    it will update.
+    '''
+
+    _length = 0.
+
+    _leftLine = QtCore.QLineF()
+    _rightLine = QtCore.QLineF()
+    _topLine = QtCore.QLineF()
+    _bottomLine = QtCore.QLineF()
+    _line12 = QtCore.QLineF()
+    _line = QtCore.QLineF()
+
+    def __init__(self, c1, c2, parent=None, scene=None):
+        '''
+        c1 and c2 must have the same parent (or, if there is no parent,
+        the same scene) as this object.
+        '''
+        super(GuideLineItem, self).__init__(parent, scene)
+
+        self._c1 = c1
+        self._c2 = c2
+        self.handleChange()
+
+        # Connect signals and slots
+        self._c1.posChanged.connect(self.handleChange)
+        self._c2.posChanged.connect(self.handleChange)
+
+    def handleChange(self):
+        if (self._line12.p1() == self._c1.pos() and
+            self._line12.p2() == self._c2.pos()):
+            return  # nothing changed
+
+        self.prepareGeometryChange()
+        self._line12.setPoints(self._c1.pos(), self._c2.pos())
+
+        # Get the intersections with the sceneRect
+        rect = self.scene().sceneRect()
+
+        xLeft = rect.left()
+        xRight = rect.right()
+        yTop = rect.top()
+        yBottom = rect.bottom()
+
+        self._leftLine.setLine(xLeft, 0., xLeft, 1.)
+        self._rightLine.setLine(xRight, 0, xRight, 1.)
+        self._topLine.setLine(0., yTop, 1., yTop)
+        self._bottomLine.setLine(0., yBottom, 1., yBottom)
+
+        xIntersectType, leftIntersect = self._line12.intersect(self._leftLine)
+        _intersectType, rightIntersect = self._line12.intersect(
+                                                            self._rightLine)
+        yIntersectType, topIntersect = self._line12.intersect(self._topLine)
+        _intersectType, bottomIntersect = self._line12.intersect(
+                                                            self._bottomLine)
+
+        # Find the correct line, out of the 6 possibilities
+        isVertical = xIntersectType == QtCore.QLineF.NoIntersection
+        isHorizontal = yIntersectType == QtCore.QLineF.NoIntersection
+
+        if (leftIntersect.y() > yTop - 0.1 and
+            leftIntersect.y() < yBottom + 0.1):
+            containsLeft = True
+        else:
+            containsLeft = False
+
+        if (rightIntersect.y() > yTop - 0.1 and
+            rightIntersect.y() < yBottom + 0.1):
+            containsRight = True
+        else:
+            containsRight = False
+
+        if (topIntersect.x() > xLeft - 0.1 and
+            topIntersect.x() < xRight + 0.1):
+            containsTop = True
+        else:
+            containsTop = False
+
+        if (bottomIntersect.x() > xLeft - 0.1 and
+            bottomIntersect.x() < xRight + 0.1):
+            containsBottom = True
+        else:
+            containsBottom = False
+
+        if (containsLeft and containsRight and not isVertical):
+            self._line.setPoints(leftIntersect, rightIntersect)
+        elif (containsTop and containsBottom and not isHorizontal):
+            self._line.setPoints(topIntersect, bottomIntersect)
+        elif containsLeft and containsTop:
+            self._line.setPoints(leftIntersect, topIntersect)
+        elif containsLeft and containsBottom:
+            self._line.setPoints(leftIntersect, bottomIntersect)
+        elif containsRight and containsTop:
+            self._line.setPoints(rightIntersect, topIntersect)
+        elif containsRight and containsBottom:
+            self._line.setPoints(rightIntersect, bottomIntersect)
+        else:
+            raise RuntimeError('unexpected execution path')
+
+        # Shrink the line by the pen half width, so that we don't extend the
+        # scene bounds
+        w = self.penHalfWidth()
+        delta = QtCore.QLineF.fromPolar(w, self._line.angle()).p2()
+
+        # Update the position, rotation, and length
+        self.setRotation(-self._line.angle())
+        self.setPos(self._line.p1() + delta)
+        self._length = self._line.length() - 2 * w
+
+    def boundingRect(self):
+        # The angle of the line in local coordinates is always 0, so I just
+        # make a box of the appropriate length and then expand it to contain
+        # the pen width
+        w = self.penHalfWidth()
+        rect = QtCore.QRectF(0, -w, self._length, w * 2.)
+        return rect
+
+    def paint(self, painter, option, widget=None):
+        # The angle of the line in local coordinates is always 0, so I just
+        # draw a line of the appropriate length
+        painter.setPen(self.pen())
+        painter.drawLine(0, 0, self._length, 0)
+
+
+def testMovableCursorItemAndMovableLineItem():
     app = QtGui.QApplication([])
     scene = QtGui.QGraphicsScene()
     view = QtGui.QGraphicsView(scene)
@@ -246,3 +385,31 @@ if __name__ == '__main__':
     view.show()
     view.raise_()
     app.exec_()
+
+
+def testGuideLineItem():
+    app = QtGui.QApplication([])
+    scene = QtGui.QGraphicsScene()
+    view = QtGui.QGraphicsView(scene)
+    scene.setSceneRect(0, 0, 300, 300)
+
+    c1 = MovableCursorItem(QtCore.QPointF(100, 100), scene=scene)
+    c1.setPen(QtGui.QPen(Qt.red, 1., Qt.SolidLine))
+    c2 = MovableCursorItem(QtCore.QPointF(200, 100), scene=scene)
+    c2.setPen(QtGui.QPen(Qt.red, 1., Qt.SolidLine))
+
+    gl = GuideLineItem(c1, c2, scene=scene)
+    gl.setPen(QtGui.QPen(Qt.red, 1., Qt.DashLine))
+
+    c1.setZValue(2)
+    c2.setZValue(2)
+    gl.setZValue(1)
+
+    view.show()
+    view.raise_()
+    app.exec_()
+
+
+if __name__ == '__main__':
+    #testMovableCursorItemAndMovableLineItem()
+    testGuideLineItem()

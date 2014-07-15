@@ -26,7 +26,7 @@ from PySide import QtGui, QtCore
 from PySide.QtCore import Qt
 
 # local imports
-from movable_items import MovableCursorItem
+from graphics_items import MovableCursorItem, GuideLineItem
 
 
 class PlotScene(QtGui.QGraphicsScene):
@@ -58,10 +58,26 @@ class PlotScene(QtGui.QGraphicsScene):
         self.c3.setPen(QtGui.QPen(Qt.red, 1., Qt.SolidLine))
         self.c4.setPen(QtGui.QPen(Qt.red, 1., Qt.SolidLine))
 
-        self.c1.setZValue(1.)
-        self.c2.setZValue(1.)
-        self.c3.setZValue(1.)
-        self.c4.setZValue(1.)
+        self.c1.setZValue(2.)
+        self.c2.setZValue(2.)
+        self.c3.setZValue(2.)
+        self.c4.setZValue(2.)
+
+        # Initialize guide lines
+        self.gl1 = GuideLineItem(self.c1, self.c2, scene=self)
+        self.gl2 = GuideLineItem(self.c2, self.c3, scene=self)
+        self.gl3 = GuideLineItem(self.c3, self.c4, scene=self)
+        self.gl4 = GuideLineItem(self.c4, self.c1, scene=self)
+
+        self.gl1.setPen(QtGui.QPen(Qt.red, 1., Qt.DashLine))
+        self.gl2.setPen(QtGui.QPen(Qt.red, 1., Qt.DashLine))
+        self.gl3.setPen(QtGui.QPen(Qt.red, 1., Qt.DashLine))
+        self.gl4.setPen(QtGui.QPen(Qt.red, 1., Qt.DashLine))
+
+        self.gl1.setZValue(1.)
+        self.gl2.setZValue(1.)
+        self.gl3.setZValue(1.)
+        self.gl4.setZValue(1.)
 
         # Initialize the data tranform
         self.updateTransform()
@@ -187,7 +203,7 @@ class PlotScene(QtGui.QGraphicsScene):
                                               style='CircleCross',
                                               scene=self)
             dataPointItem.setPen(QtGui.QPen(Qt.darkGreen, 1., Qt.SolidLine))
-            dataPointItem.setZValue(2.)
+            dataPointItem.setZValue(3.)
             self.dataPointItems.append(dataPointItem)
             event.accept()
         elif event.button() == Qt.RightButton:
