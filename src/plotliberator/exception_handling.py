@@ -26,27 +26,14 @@ import traceback
 from PySide import QtGui, QtCore
 
 
-class IgnoreException(Exception):
-    '''A special exception class to be ignored by the exception handler.'''
-    pass
-
-
-class QuitException(Exception):
-    '''A special exception class that signifies the user wants to quit.'''
-    pass
-
-
 def excepthook(exctype, value, traceback):
     '''Show an exception dialog if an uncaught exception occurs'''
     # IgnoreException's are ignored to clear out the stack frame
     # from the previous exception
-    if isinstance(value, IgnoreException):
-        return
-    elif isinstance(value, QuitException):
+    d = ExceptionDialog(exctype, value, traceback)
+    result = d.exec_()
+    if result == d.Accepted:
         sys.exit()
-    else:
-        d = ExceptionDialog(exctype, value, traceback)
-        d.exec_()
 
 
 def install_excepthook():
@@ -83,19 +70,11 @@ class ExceptionDialog(QtGui.QDialog):
         self.ignoreButton.clicked.connect(self.ignore)
         self.quitButton.clicked.connect(self.quit)
 
-    def _raiseIgnoreException(self):
-        raise IgnoreException()
-
-    def _raiseQuitException(self):
-        raise QuitException()
-
     def ignore(self):
-        QtCore.QTimer.singleShot(0, self._raiseIgnoreException)
         self.reject()
 
     def quit(self):
-        QtCore.QTimer.singleShot(0, self._raiseQuitException)
-        self.reject()
+        self.accept()
 
 if __name__ == '__main__':
     app = QtGui.QApplication([])
