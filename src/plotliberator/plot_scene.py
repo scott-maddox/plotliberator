@@ -86,6 +86,7 @@ class PlotScene(QtGui.QGraphicsScene):
 
         # Initialize pixmap item
         self.pixmapItem = QtGui.QGraphicsPixmapItem(scene=self)
+        self.pixmapItem.setAcceptTouchEvents(False)
         # Make pixmap zooming look pretty
         self.pixmapItem.setTransformationMode(Qt.SmoothTransformation)
         self.pixmapItem.setZValue(0.)
@@ -212,16 +213,20 @@ class PlotScene(QtGui.QGraphicsScene):
             if event.isAccepted():
                 return
             # The event wasn't accepted, so we should add a data point,
-            # then dispatch the event to the new data point.
+            # then dispatch a new event, so that it gets grabbed.
             dataPointItem = MovableCursorItem(event.scenePos(),
                                               style='CircleCross')
             dataPointItem.setPen(QtGui.QPen(Qt.darkGreen, 1., Qt.SolidLine))
             dataPointItem.setZValue(3.)
             self.addDataPointItem(dataPointItem)
-            super(PlotScene, self).mousePressEvent(event)
-            if not event.isAccepted():
-                # No drag, so we'll accept it
-                event.accept()
+            event.ignore()
+            e = QtGui.QGraphicsSceneMouseEvent(event.GraphicsSceneMousePress)
+            e.setScenePos(event.scenePos())
+            e.setPos(event.pos())
+            e.setButton(event.button())
+            e.setButtons(event.buttons())
+            e.setModifiers(event.modifiers())
+            self.event(e)
         elif event.button() == Qt.RightButton:
             # First, check if the right click was on a dataPointItem.
             # If it was, remove that item and accept the event.
