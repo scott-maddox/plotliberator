@@ -44,6 +44,8 @@ class PlotScene(QtGui.QGraphicsScene):
     def __init__(self, parent=None):
         super(PlotScene, self).__init__(parent)
 
+        self.image = None
+
         # Initialize axis corners:
         # c1  c2
         #
@@ -180,12 +182,17 @@ class PlotScene(QtGui.QGraphicsScene):
             self.dataTransform = dataTransform
 
     def setPlotImage(self, image):
+        self.image = image
         pixmap = QtGui.QPixmap.fromImage(image)
         self.pixmapItem.setPixmap(pixmap)
-        w = image.width()
-        h = image.height()
+        self.resetAxisCorners()
 
-        # Move the corners to the image corners
+    def resetAxisCorners(self):
+        '''
+        Move the axis corners to the image corners.
+        '''
+        w = self.image.width()
+        h = self.image.height()
         self.c1.setPos(0, 0)
         self.c2.setPos(w, 0)
         self.c3.setPos(w, h)

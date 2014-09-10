@@ -98,6 +98,11 @@ class MainWindow(QtGui.QMainWindow):
         self.clearDataAction.setToolTip('Clear data')
         self.clearDataAction.triggered.connect(self.clearData)
 
+        self.resetAxesAction = QtGui.QAction('&Reset Axes', self)
+        self.resetAxesAction.setStatusTip('Reset the axes')
+        self.resetAxesAction.setToolTip('Reset the axes')
+        self.resetAxesAction.triggered.connect(self.resetAxes)
+
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(self.openAction)
@@ -110,6 +115,7 @@ class MainWindow(QtGui.QMainWindow):
         dataMenu = menubar.addMenu('&Data')
         dataMenu.addAction(self.saveDataAction)
         dataMenu.addAction(self.clearDataAction)
+        dataMenu.addAction(self.resetAxesAction)
 
         aboutMenu = menubar.addMenu('&About')
         aboutMenu.addAction(self.aboutAction)
@@ -118,7 +124,7 @@ class MainWindow(QtGui.QMainWindow):
         self.statusBar()
 
         # Axis value line edits
-        self.x1LineEdit = QtGui.QLineEdit('%g' % self.plotScene._x1)
+        self.x1LineEdit = QtGui.QLineEdit('0.')
         self.x2LineEdit = QtGui.QLineEdit('1.')
         self.y1LineEdit = QtGui.QLineEdit('0.')
         self.y2LineEdit = QtGui.QLineEdit('1.')
@@ -305,6 +311,13 @@ class MainWindow(QtGui.QMainWindow):
 
     def clearData(self):
         self.plotScene.clearDataPointItems()
+
+    def resetAxes(self):
+        self.plotScene.resetAxisCorners()
+        self.x1LineEdit.setText('0.')
+        self.x2LineEdit.setText('1.')
+        self.y1LineEdit.setText('0.')
+        self.y2LineEdit.setText('1.')
 
     def about(self):
         title = 'About Plot Liberator'
