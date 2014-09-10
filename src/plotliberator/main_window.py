@@ -22,7 +22,7 @@
 import os.path
 
 # third party imports
-from PySide import QtGui
+from PySide import QtCore, QtGui
 from PySide.QtCore import Qt
 
 # local imports
@@ -51,6 +51,8 @@ class MainWindow(QtGui.QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
+
+        self._settings = QtCore.QSettings()
 
         # Initialize GUI stuff
         self.initUI()
@@ -244,14 +246,19 @@ class MainWindow(QtGui.QMainWindow):
             self.plotScene.setYValues(y1, y2, yLog)
 
     def open(self):
-        filepath, _filt = QtGui.QFileDialog.getOpenFileName(
-                                parent=self,
-                                caption='Open a plot image',
-                                dir=self.filepath,
-                                filter=IMAGE_FILTER)
-        if not filepath:
+        openpath = self._settings.value('last_open_path', '')
+        dialog = QtGui.QFileDialog(parent=self,
+                                   caption='Open a plot image',
+                                   directory=openpath,
+                                   filter=IMAGE_FILTER)
+        dialog.selectFile(openpath)
+        dialog.setFileMode(dialog.ExistingFile)
+        if not dialog.exec_():
             return
+
+        filepath = dialog.selectedFiles()[0]
         _dirpath, filename = os.path.split(filepath)
+        self._settings.setValue('last_open_path', filepath)
         self.setWindowTitle(u'Plot Liberator - {}'.format(filename))
 
         image = QtGui.QImage(filepath)
@@ -260,23 +267,27 @@ class MainWindow(QtGui.QMainWindow):
                     "Cannot load %s." % filepath)
             return
 
-        # Store the filepath for use in save
-        self.filepath = filepath
-
         # Replace the old plot with the new one
         self.plotScene.setPlotImage(image)
 
     def save(self):
-        filepath, filt = QtGui.QFileDialog.getSaveFileName(parent=self,
-                                caption='Save data',
-                                dir=self.filepath,
-                                filter=TXT_FILTER + ';;' + CSV_FILTER)
-        if not filepath:
+        savepath = self._settings.value('last_save_path', '')
+        dialog = QtGui.QFileDialog(parent=self,
+                                   caption='Save data',
+                                   directory=savepath,
+                                   filter=TXT_FILTER + ';;' + CSV_FILTER)
+        dialog.selectFile(savepath)
+        dialog.setAcceptMode(dialog.AcceptSave)
+        if not dialog.exec_():
             return
 
-        if filt == TXT_FILTER:
+        filepath = dialog.selectedFiles()[0]
+        filter = dialog.selectedFilter()
+        self._settings.setValue('last_save_path', filepath)
+
+        if filter == TXT_FILTER:
             delimiter = '\t'
-        elif filt == CSV_FILTER:
+        elif filter == CSV_FILTER:
             delimiter = ','
         else:
             raise RuntimeError('unexpected execution path')
