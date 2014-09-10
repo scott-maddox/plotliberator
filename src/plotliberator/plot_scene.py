@@ -205,13 +205,16 @@ class PlotScene(QtGui.QGraphicsScene):
             super(PlotScene, self).mousePressEvent(event)
             if event.isAccepted():
                 return
-            # The event wasn't accepted, so we should add a data point.
+            # The event wasn't accepted, so we should add a data point,
+            # then dispatch the event to the new data point.
             dataPointItem = MovableCursorItem(event.scenePos(),
                                               style='CircleCross')
             dataPointItem.setPen(QtGui.QPen(Qt.darkGreen, 1., Qt.SolidLine))
             dataPointItem.setZValue(3.)
             self.addDataPointItem(dataPointItem)
-            event.accept()
+            super(PlotScene, self).mousePressEvent(event)
+            if not event.isAccepted():
+                raise Exception('Unexpected execution path.')
         elif event.button() == Qt.RightButton:
             # First, check if the right click was on a dataPointItem.
             # If it was, remove that item and accept the event.
