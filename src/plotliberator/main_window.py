@@ -296,12 +296,12 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         filepath = dialog.selectedFiles()[0]
-        filter = dialog.selectedFilter()
+        filt = dialog.selectedFilter()
         self._settings.setValue('last_save_path', filepath)
 
-        if filter == TXT_FILTER:
+        if filt == TXT_FILTER:
             delimiter = '\t'
-        elif filter == CSV_FILTER:
+        elif filt == CSV_FILTER:
             delimiter = ','
         else:
             raise RuntimeError('unexpected execution path')

@@ -35,7 +35,7 @@ if __name__ == '__main__':
     except ImportError:
         import os
         sys.path.append(
-            os.path.abspath(os.path.join(os.path.dirname(__file__), '..')) )
+            os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
         import plotliberator
 from plotliberator.main_window import MainWindow
 from plotliberator.exception_handling import install_excepthook
