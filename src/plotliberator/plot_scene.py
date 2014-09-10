@@ -214,7 +214,8 @@ class PlotScene(QtGui.QGraphicsScene):
             self.addDataPointItem(dataPointItem)
             super(PlotScene, self).mousePressEvent(event)
             if not event.isAccepted():
-                raise Exception('Unexpected execution path.')
+                # No drag, so we'll accept it
+                event.accept()
         elif event.button() == Qt.RightButton:
             # First, check if the right click was on a dataPointItem.
             # If it was, remove that item and accept the event.
