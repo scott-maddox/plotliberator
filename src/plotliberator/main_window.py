@@ -318,6 +318,8 @@ class MainWindow(QtGui.QMainWindow):
         self.x2LineEdit.setText('1.')
         self.y1LineEdit.setText('0.')
         self.y2LineEdit.setText('1.')
+        self.xLogCheckBox.setChecked(False)
+        self.yLogCheckBox.setChecked(False)
 
     def about(self):
         title = 'About Plot Liberator'

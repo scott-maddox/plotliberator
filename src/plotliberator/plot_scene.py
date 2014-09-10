@@ -191,12 +191,18 @@ class PlotScene(QtGui.QGraphicsScene):
         '''
         Move the axis corners to the image corners.
         '''
-        w = self.image.width()
-        h = self.image.height()
-        self.c1.setPos(0, 0)
-        self.c2.setPos(w, 0)
-        self.c3.setPos(w, h)
-        self.c4.setPos(0, h)
+        if self.image:
+            w = self.image.width()
+            h = self.image.height()
+            self.c1.setPos(0, 0)
+            self.c2.setPos(w, 0)
+            self.c3.setPos(w, h)
+            self.c4.setPos(0, h)
+        else:
+            self.c1.setPos(0, 0)
+            self.c2.setPos(300, 0)
+            self.c3.setPos(300, 300)
+            self.c4.setPos(0, 300)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
