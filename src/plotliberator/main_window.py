@@ -87,21 +87,29 @@ class MainWindow(QtGui.QMainWindow):
         self.zoomOutAction.setShortcut('Ctrl+-')
         self.zoomOutAction.triggered.connect(self.view.zoomOut)
 
-        self.saveAction = QtGui.QAction('&Save', self)
-        self.saveAction.setStatusTip('Save data')
-        self.saveAction.setToolTip('Save data')
-        self.saveAction.setShortcut('Ctrl+S')
-        self.saveAction.triggered.connect(self.save)
+        self.saveDataAction = QtGui.QAction('&Save', self)
+        self.saveDataAction.setStatusTip('Save data')
+        self.saveDataAction.setToolTip('Save data')
+        self.saveDataAction.setShortcut('Ctrl+S')
+        self.saveDataAction.triggered.connect(self.saveData)
+
+        self.clearDataAction = QtGui.QAction('&Clear', self)
+        self.clearDataAction.setStatusTip('Clear data')
+        self.clearDataAction.setToolTip('Clear data')
+        self.clearDataAction.triggered.connect(self.clearData)
 
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(self.openAction)
-        fileMenu.addAction(self.saveAction)
 
         viewMenu = menubar.addMenu('&View')
         viewMenu.addAction(self.actualSizeAction)
         viewMenu.addAction(self.zoomInAction)
         viewMenu.addAction(self.zoomOutAction)
+
+        dataMenu = menubar.addMenu('&Data')
+        dataMenu.addAction(self.saveDataAction)
+        dataMenu.addAction(self.clearDataAction)
 
         aboutMenu = menubar.addMenu('&About')
         aboutMenu.addAction(self.aboutAction)
@@ -270,7 +278,7 @@ class MainWindow(QtGui.QMainWindow):
         # Replace the old plot with the new one
         self.plotScene.setPlotImage(image)
 
-    def save(self):
+    def saveData(self):
         savepath = self._settings.value('last_save_path', '')
         dialog = QtGui.QFileDialog(parent=self,
                                    caption='Save data',
@@ -294,6 +302,9 @@ class MainWindow(QtGui.QMainWindow):
         with open(filepath, 'w') as f:
             for x, y in self.plotScene.getData():
                 f.write('%E%s%E\n' % (x, delimiter, y))
+
+    def clearData(self):
+        self.plotScene.clearDataPointItems()
 
     def about(self):
         title = 'About Plot Liberator'

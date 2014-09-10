@@ -200,24 +200,44 @@ class PlotScene(QtGui.QGraphicsScene):
                 return
             # The event wasn't accepted, so we should add a data point.
             dataPointItem = MovableCursorItem(event.scenePos(),
-                                              style='CircleCross',
-                                              scene=self)
+                                              style='CircleCross')
             dataPointItem.setPen(QtGui.QPen(Qt.darkGreen, 1., Qt.SolidLine))
             dataPointItem.setZValue(3.)
-            self.dataPointItems.append(dataPointItem)
+            self.addDataPointItem(dataPointItem)
             event.accept()
         elif event.button() == Qt.RightButton:
             # First, check if the right click was on a dataPointItem.
             # If it was, remove that item and accept the event.
             item = self.itemAt(event.scenePos())
             if item in self.dataPointItems:
-                self.dataPointItems.remove(item)
-                self.removeItem(item)
+                self.removeDataPointItem(item)
                 event.accept()
             # Otherwise, dispatch the event.
             super(PlotScene, self).mousePressEvent(event)
         else:
             super(PlotScene, self).mousePressEvent(event)
+
+    def addDataPointItem(self, item):
+        '''
+        Add a data point item.
+        '''
+        self.dataPointItems.append(item)
+        self.addItem(item)
+
+    def removeDataPointItem(self, item):
+        '''
+        Remove a data point item.
+        '''
+        self.dataPointItems.remove(item)
+        self.removeItem(item)
+
+    def clearDataPointItems(self):
+        '''
+        Clears the data point items.
+        '''
+        for item in self.dataPointItems:
+            self.removeItem(item)
+        self.dataPointItems = []
 
     def getData(self):
         '''
